@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const Post = require( "../models/Post.js");
 const User = require( "../models/User.js");
 
@@ -36,6 +37,12 @@ module.exports.getAllPosts = async (req, res) => {
 // like and unlike 
 
 module.exports.toggleLike = async (req, res) => {
+   const error = validationResult(req)
+
+   if(!error.isEmpty()){
+     return res.status(400).json({errors:error.array()})
+   }
+
   try {
     const postId = req.params.id;
     const userId = req.user.id;
@@ -43,25 +50,29 @@ module.exports.toggleLike = async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
-    const alreadyLiked = post.likedBy.includes(userId);
+     const alreadyLiked = post.likedBy.some(
+      (like) => like.userId && like.userId.toString() === userId.toString()
+    );
  
     if (alreadyLiked) {
       // 👎 Unlike → remove userId and decrement count
       post.likedBy = post.likedBy.filter(
-        (id) => id.toString() !== userId.toString()
+        (like) => like.userId && like.userId.toString() !== userId.toString()
       );
       post.likesCount = Math.max(0, post.likesCount - 1);
     } else {
       // 👍 Like → add userId and increment count
-      post.likedBy.push(userId);
+      post.likedBy.push({userId});
       post.likesCount += 1;
     }
 
     await post.save();
+    
 
     res.status(200).json({
       message: alreadyLiked ? "Unliked" : "Liked",
-      likesCount: post.likesCount
+      likesCount: post.likesCount,
+      post
     });
   } catch (error) {
     console.error(error);

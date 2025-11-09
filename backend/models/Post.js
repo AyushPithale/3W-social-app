@@ -11,8 +11,11 @@ const postSchema = new mongoose.Schema(
     },
     likedBy: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+
+      
+        userId: {type:mongoose.Schema.Types.ObjectId, ref: "User"},
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: "User"
       }
     ],
     comments: [

@@ -1,6 +1,6 @@
 const  express = require( "express");
 const  multer = require( "multer");
-const  { createPost, getAllPosts } = require( "../controller/postController");
+const  { createPost, getAllPosts, toggleLike } = require( "../controller/postController");
 const  { authMiddleware } = require( "../middleware/authMiddleware");
 const { body } = require("express-validator");
 
@@ -21,5 +21,7 @@ router.post("/create", authMiddleware,
 
 
 router.get("/all", getAllPosts);
+
+router.put("/like/:id", authMiddleware , toggleLike )
 
 module.exports  =  router;
