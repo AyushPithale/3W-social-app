@@ -2,11 +2,11 @@ const User = require("../models/User.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// Signup
-module.exports.signup = async (req, res) => {
+// registerUser
+module.exports.registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-
+    //  console.log(username , email,  "req" ,req.body)
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: "User already exists" });
 
@@ -20,7 +20,7 @@ module.exports.signup = async (req, res) => {
   }
 };
 
-// Login
+// Login user
 module.exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -34,9 +34,15 @@ module.exports.login = async (req, res) => {
     const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: "7d"
     });
-
-    res.json({ message:"User login successfully!" token, user });
+   res.cookie("token", token)
+    res.json({ message:"User login successfully!", token, user });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+module.exports.logout = async (req,res) => {
+   
+ res.cookie("token", "")
+  res.json({message:"User logout successfully!"})
+}
