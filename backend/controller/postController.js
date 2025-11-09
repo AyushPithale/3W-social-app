@@ -79,3 +79,47 @@ module.exports.toggleLike = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// add comment to post
+
+module.exports.addComment = async (req,res) => {
+
+  const error  = validationResult(req)
+
+  if(!error.isEmpty()){
+    return res.status(400).json({errors:error.array()})
+
+  }
+
+  const postId =  req.params.id
+  const userId = req.user.id
+
+  try {
+ 
+ const {text} = req.body
+
+    const user  = await User.findById(userId)
+    const post  = await Post.findById(postId)
+
+    if(!post) {
+      return res.status(404).json({message:"post not found"})
+    }
+   
+    const comment = await post.comments.push({
+      userId,
+      username:user.username,
+      text
+    })
+     
+ await post.save()
+
+ res.status(201).json({message:"comment added successfully!",
+  comment,
+  post
+ })
+
+  } catch (err) {
+     res.status(500).json({message:"server error"})
+  }
+  
+}

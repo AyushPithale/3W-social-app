@@ -1,6 +1,6 @@
 const  express = require( "express");
 const  multer = require( "multer");
-const  { createPost, getAllPosts, toggleLike } = require( "../controller/postController");
+const  { createPost, getAllPosts, toggleLike, addComment } = require( "../controller/postController");
 const  { authMiddleware } = require( "../middleware/authMiddleware");
 const { body } = require("express-validator");
 
@@ -23,5 +23,12 @@ router.post("/create", authMiddleware,
 router.get("/all", getAllPosts);
 
 router.put("/like/:id", authMiddleware , toggleLike )
+
+router.post("/comment/:id", authMiddleware, 
+  body("text").isString().withMessage("Comment text must be a string"),
+
+  addComment
+
+)
 
 module.exports  =  router;
