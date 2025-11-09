@@ -4,10 +4,20 @@ const postSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     text: { type: String },
-    imageUrl: { type: String },
-    likes: [{ type: String }], // usernames of users who liked
+    image: { type: String },
+   likesCount: {
+      type: Number,
+      default: 0
+    },
+    likedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ],
     comments: [
       {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         username: String,
         text: String,
         createdAt: { type: Date, default: Date.now }

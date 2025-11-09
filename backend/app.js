@@ -4,7 +4,7 @@ const cors = require( "cors");
 const { connectDB } = require( "./db/db.js");
 const authRoutes = require( "./routes/authRoutes.js");
 const postRoutes = require( "./routes/postRoutes.js");
-
+const cookieParser = require("cookie-parser");
 dotenv.config();
 connectDB();
 
@@ -13,6 +13,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
 

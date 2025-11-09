@@ -5,7 +5,7 @@ const User = require( "../models/User.js");
 module.exports.createPost = async (req, res) => {
   try {
     const { text } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
 
     if (!text && !imageUrl) {
       return res.status(400).json({ message: "Post must have text or image" });
@@ -14,7 +14,7 @@ module.exports.createPost = async (req, res) => {
     const post = await Post.create({
       userId: req.user.id,
       text,
-      imageUrl
+      image
     });
 
     res.status(201).json(post);
@@ -29,6 +29,42 @@ module.exports.getAllPosts = async (req, res) => {
     const posts = await Post.find().populate("userId", "username").sort({ createdAt: -1 });
     res.json(posts);
   } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// like and unlike 
+
+module.exports.toggleLike = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.user.id;
+
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    const alreadyLiked = post.likedBy.includes(userId);
+ 
+    if (alreadyLiked) {
+      // 👎 Unlike → remove userId and decrement count
+      post.likedBy = post.likedBy.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+      post.likesCount = Math.max(0, post.likesCount - 1);
+    } else {
+      // 👍 Like → add userId and increment count
+      post.likedBy.push(userId);
+      post.likesCount += 1;
+    }
+
+    await post.save();
+
+    res.status(200).json({
+      message: alreadyLiked ? "Unliked" : "Liked",
+      likesCount: post.likesCount
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
