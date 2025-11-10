@@ -41,8 +41,28 @@ module.exports.login = async (req, res) => {
   }
 };
 
+// logout
 module.exports.logout = async (req,res) => {
    
  res.cookie("token", "")
   res.json({message:"User logout successfully!"})
+}
+
+
+//me user 
+
+module.exports.me = async (req,res) => {
+
+
+  try {
+     const userId = req.user.id
+
+     const user = await User.findById(userId).select("-password")
+
+
+     res.status(200).json(user)
+  } catch (err) {
+   res.status(500).json({message:"Server error"})    
+  }
+  
 }

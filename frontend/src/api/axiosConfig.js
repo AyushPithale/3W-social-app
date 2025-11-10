@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+// import { Navigate } from "react-router-dom";
 
 const API = axios.create({
   baseURL: `${import.meta.env.VITE_BASE_URL}/api`,
@@ -7,8 +9,11 @@ const API = axios.create({
 
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
-  if (token) req.headers.Authorization = `Bearer ${token}`;
+  if (token) {req.headers.Authorization = `Bearer ${token}`;
   return req;
+}
+ 
+
 });
 
 export default API;
