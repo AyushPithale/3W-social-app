@@ -25,9 +25,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 
 
-app.post("/test", (req, res) => {
-  console.log("Body received:", req.body);
-  res.json(req.body);
+app.get("/test", (req, res) => {
+  res.send("heloow");
 });
 
 
