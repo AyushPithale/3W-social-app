@@ -2,20 +2,23 @@ import { useState } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import API from "../api/axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../context/userContext";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-
+ const {user ,setUser} = useUser()
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await API.post("/auth/login", form);
+      setUser(res.data.user)
       localStorage.setItem("token", res.data.token);
       navigate("/feed");
-    } catch {
+    } catch(err) {
+        console.log(err)
       alert("Invalid credentials");
     }
   };
