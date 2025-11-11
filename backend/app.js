@@ -25,6 +25,10 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 
+app.get("/api/test", (req, res) => {
+  res.json({ message: "✅ Backend is working!" });
+});
+
 
 app.get("/test", (req, res) => {
   res.send("heloow");
