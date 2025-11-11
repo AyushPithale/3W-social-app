@@ -11,7 +11,7 @@ connectDB();
 const app = express();
 app.use("/uploads", express.static("uploads"));
 app.use(cors({
-    origin: "https://social-app-for-3-w.vercel.app",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true }
 ));
